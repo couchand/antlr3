@@ -34,7 +34,7 @@ import org.stringtemplate.v4.ST;
 
 import java.util.Set;
 
-public class JavaTarget extends Target {
+public class ApexTarget extends Target {
     @Override
     public boolean useBaseTemplatesForSynPredFragments() {
         return false;
