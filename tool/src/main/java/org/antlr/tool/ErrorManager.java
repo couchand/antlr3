@@ -385,7 +385,7 @@ public class ErrorManager {
 			public void runTimeError(STMessage msg) {
 				switch (msg.error) {
 				case NO_SUCH_ATTRIBUTE:
-				case NO_SUCH_ATTRIBUTE_PASS_THROUGH:
+				//case NO_SUCH_ATTRIBUTE_PASS_THROUGH:
 				case NO_SUCH_PROPERTY:
 					ErrorManager.warning(ErrorManager.MSG_STRING_TEMPLATE_ERROR, msg.toString());
 					return;
