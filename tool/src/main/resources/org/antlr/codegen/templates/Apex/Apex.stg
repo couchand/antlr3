@@ -26,7 +26,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-javaTypeInitMap ::= [
+apexTypeInitMap ::= [
 	"int":"0",
 	"long":"0",
 	"float":"0.0f",
@@ -1259,7 +1259,7 @@ delegateName(d) ::= <<
  *  must be an object, default value is "null".
  */
 initValue(typeName) ::= <<
-<javaTypeInitMap.(typeName)>
+<apexTypeInitMap.(typeName)>
 >>
 
 /** Define a rule label including default value */
@@ -1448,7 +1448,7 @@ bitset(name, words64) ::= <<
 public static final BitSet <name> = new BitSet(new long[]{<words64:{it |<it>L};separator=",">});
 >>
 
-codeFileExtension() ::= ".java"
+codeFileExtension() ::= ".cls"
 
 true_value() ::= "true"
 false_value() ::= "false"
