@@ -1,3 +1,3 @@
 lexer grammar T;
-options { language = XYZ; }
+options { language = Apex; }
 ZERO: '0';
