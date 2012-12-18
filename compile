@@ -1,2 +1,2 @@
 #!/bin/bash
-mvn -Dgpg.skip=true -Duser.name="Your Name" -DskipTests=true -Dbootclasspath.compile=/usr/lib/jvm/java-6-openjdk-i386/jre/lib/rt.jar -Djava6.home=/usr/lib/jvm/java-6-openjdk-i386/jre -X
+mvn -Dgpg.skip=true -Duser.name="Your Name" -DskipTests=true -Dbootclasspath.compile=/usr/lib/jvm/java-6-openjdk-$1/jre/lib/rt.jar -Djava6.home=/usr/lib/jvm/java-6-openjdk-$1/jre -X
