@@ -73,7 +73,6 @@
                 </executions>
 
             </plugin>
-    <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
@@ -87,7 +86,6 @@
           </execution>
         </executions>
       </plugin>
-    </plugins>
 
         </plugins>
 
