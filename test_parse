@@ -1,2 +1,2 @@
 #!/bin/bash
-java -cp "tool/target/classes:tool/target/dependency/ST4-4.0.7-rc-1.jar:tool/target/dependency/antlr-2.7.7.jar:tool/target/dependency/antlr-runtime-3.5-SNAPSHOT.jar" org.antlr.Tool T.g
+cd test-apex && java -cp "../tool/target/classes:../tool/target/dependency/ST4-4.0.7-rc-1.jar:../tool/target/dependency/antlr-2.7.7.jar:../tool/target/dependency/antlr-runtime-3.5-SNAPSHOT.jar" org.antlr.Tool T.g
