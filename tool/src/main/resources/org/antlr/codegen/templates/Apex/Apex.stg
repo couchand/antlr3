@@ -549,14 +549,14 @@ switch (alt<decisionNumber>) {
 /** A rule block with multiple alternatives */
 ruleBlock(alts,decls,decision,enclosingBlockLevel,blockLevel,decisionNumber,maxK,maxAlt,description) ::= <<
 // <fileName>:<description>
-int alt<decisionNumber>=<maxAlt>;
+Integer alt<decisionNumber>=<maxAlt>;
 <decls>
 <@predecision()>
 <decision>
 <@postdecision()>
-switch (alt<decisionNumber>) {
-	<alts:{a | <altSwitchCase(i,a)>}>
-}
+<@prebranch()>
+<alts:{a | <ifCase(decisionNumber,i,a)>}; separator=" else ">
+<@postbranch()>
 >>
 
 ruleBlockSingleAlt(alts,decls,decision,enclosingBlockLevel,blockLevel,decisionNumber,description) ::= <<
@@ -644,15 +644,22 @@ case <altNum> :
 	break;<\n>
 >>
 
+ifCase(decisionNum,altNum,alt) ::= <<
+if( alt<decisionNum> == altNum ) {
+	<@prealt()>
+	<alt>
+}
+>>
+
 /** An alternative is just a list of elements; at outermost level */
 alt(elements,altNum,description,autoAST,outerAlt,treeLevel,rew) ::= <<
 // <fileName>:<description>
-{
+//{
 <@declarations()>
 <elements:element()>
 <rew>
 <@cleanup()>
-}
+//}
 >>
 
 /** What to emit when there is no rewrite.  For auto build
