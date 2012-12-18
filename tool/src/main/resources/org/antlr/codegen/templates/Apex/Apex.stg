@@ -27,14 +27,9 @@
 */
 
 apexTypeInitMap ::= [
-	"int":"0",
-	"long":"0",
-	"float":"0.0f",
-	"double":"0.0",
-	"boolean":"false",
-	"byte":"0",
-	"short":"0",
-	"char":"0",
+	"Integer":"0",
+	"Decimal":"0.0",
+	"Boolean":"false",
 	default:"null" // anything other than an atomic type
 ]
 
@@ -62,22 +57,7 @@ outputFile(LEXER,PARSER,TREE_PARSER, actionScope, actions,
 // $ANTLR <ANTLRVersion> <fileName> <generatedTimestamp>
 <actions.(actionScope).header>
 
-<@imports>
-import org.antlr.runtime.*;
-<if(TREE_PARSER)>
-import org.antlr.runtime.tree.*;
-<endif>
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
-<if(backtracking)>
-import java.util.Map;
-import java.util.HashMap;
-<endif>
-<@end>
-
 <docComment>
-@SuppressWarnings("all")
 <recognizer>
 
 >>
@@ -85,7 +65,7 @@ import java.util.HashMap;
 lexer(grammar, name, tokens, scopes, rules, numRules, filterMode, labelType="CommonToken",
       superClass="Lexer") ::= <<
 public class <grammar.recognizerName> extends <@superClassName><superClass><@end> {
-	<tokens:{it | public static final int <it.name>=<it.type>;}; separator="\n">
+	<tokens:{it | public static final Integer <it.name>=<it.type>;}; separator="\n">
 	<scopes:{it |<if(it.isDynamicGlobalScope)><globalAttributeScope(it)><endif>}>
 	<actions.lexer.members>
 
@@ -117,7 +97,7 @@ public class <grammar.recognizerName> extends <@superClassName><superClass><@end
 			{g|this.<g:delegateName()> = <g:delegateName()>;}; separator="\n">
 		<last(grammar.delegators):{g|gParent = <g:delegateName()>;}>
 	}
-	@Override public String getGrammarFileName() { return "<fileName>"; }
+	public override String getGrammarFileName() { return "<fileName>"; }
 
 <if(filterMode)>
 	<filteringNextToken()>
@@ -139,8 +119,7 @@ public class <grammar.recognizerName> extends <@superClassName><superClass><@end
  *  at backtracking==1.
  */
 filteringNextToken() ::= <<
-@Override
-public Token nextToken() {
+public override Token nextToken() {
 	while (true) {
 		if ( input.LA(1)==CharStream.EOF ) {
 			Token eof = new CommonToken(input,Token.EOF,
@@ -181,16 +160,14 @@ public Token nextToken() {
 	}
 }
 
-@Override
-public void memoize(IntStream input,
+public override void memoize(IntStream input,
 		int ruleIndex,
 		int ruleStartIndex)
 {
 if ( state.backtracking>1 ) super.memoize(input, ruleIndex, ruleStartIndex);
 }
 
-@Override
-public boolean alreadyParsedRule(IntStream input, int ruleIndex) {
+public override boolean alreadyParsedRule(IntStream input, int ruleIndex) {
 if ( state.backtracking>1 ) return super.alreadyParsedRule(input, ruleIndex);
 return false;
 }
@@ -211,7 +188,7 @@ public class <grammar.recognizerName> extends <@superClassName><superClass><@end
 		"\<invalid>", "\<EOR>", "\<DOWN>", "\<UP>", <tokenNames; separator=", ", wrap="\n\t\t">
 	};
 <endif>
-	<tokens:{it |public static final int <it.name>=<it.type>;}; separator="\n">
+	<tokens:{it |public static final Integer <it.name>=<it.type>;}; separator="\n">
 
 	// delegates
 	<grammar.delegates: {g|public <g.recognizerName> <g:delegateName()>;}; separator="\n">
@@ -241,8 +218,8 @@ public class <grammar.recognizerName> extends <@superClassName><superClass><@end
 	}
 <@end>
 
-	@Override public String[] getTokenNames() { return <grammar.composite.rootGrammar.recognizerName>.tokenNames; }
-	@Override public String getGrammarFileName() { return "<fileName>"; }
+	public override String[] getTokenNames() { return <grammar.composite.rootGrammar.recognizerName>.tokenNames; }
+	public override String getGrammarFileName() { return "<fileName>"; }
 
 	<members>
 
@@ -252,7 +229,7 @@ public class <grammar.recognizerName> extends <@superClassName><superClass><@end
    appear to be defined in this recognizer. !>
 	// Delegated rules
 <grammar.delegatedRules:{ruleDescriptor|
-	public <returnType(ruleDescriptor)> <ruleDescriptor.name>(<ruleDescriptor.parameterScope:parameterScope()>) throws <ruleDescriptor.throwsSpec; separator=", "> { <if(ruleDescriptor.hasReturnValue)>return <endif><ruleDescriptor.grammar:delegateName()>.<ruleDescriptor.name>(<if(ruleDescriptor.parameterScope)><ruleDescriptor.parameterScope.attributes:{a|<a.name>}; separator=", "><endif>); \}}; separator="\n">
+	public <returnType(ruleDescriptor)> <ruleDescriptor.name>(<ruleDescriptor.parameterScope:parameterScope()>) { <if(ruleDescriptor.hasReturnValue)>return <endif><ruleDescriptor.grammar:delegateName()>.<ruleDescriptor.name>(<if(ruleDescriptor.parameterScope)><ruleDescriptor.parameterScope.attributes:{a|<a.name>}; separator=", "><endif>); \}}; separator="\n">
 
 	<synpreds:{p | <synpred(p)>}>
 
@@ -307,7 +284,7 @@ treeParser(grammar, name, scopes, tokens, tokenNames, globalAction, rules,
 synpredRule(ruleName, ruleDescriptor, block, description, nakedBlock) ::=
 <<
 // $ANTLR start <ruleName>
-public final void <ruleName>_fragment(<ruleDescriptor.parameterScope:parameterScope()>) throws <ruleDescriptor.throwsSpec:{x|<x>}; separator=", "> {
+public void <ruleName>_fragment(<ruleDescriptor.parameterScope:parameterScope()>) {
 	<ruleLabelDefs()>
 <if(trace)>
 	traceIn("<ruleName>_fragment", <ruleDescriptor.index>);
@@ -328,13 +305,13 @@ synpred(name) ::= <<
 public final boolean <name>() {
 	state.backtracking++;
 	<@start()>
-	int start = input.mark();
+	Integer start = input.mark();
 	try {
 		<name>_fragment(); // can never throw exception
 	} catch (RecognitionException re) {
-		System.err.println("impossible: "+re);
+		System.debug("impossible: "+re);
 	}
-	boolean success = !state.failed;
+	Boolean success = !state.failed;
 	input.rewind(start);
 	<@stop()>
 	state.backtracking--;
@@ -372,10 +349,7 @@ rule(ruleName,ruleDescriptor,block,emptyRule,description,exceptions,finally,memo
 
 // $ANTLR start "<ruleName>"
 // <fileName>:<description>
-<if(isPredefinedRewriteRule.(ruleName) && filterMode && buildAST)>
-@Override
-<endif>
-public final <returnType(ruleDescriptor)> <ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) throws <ruleDescriptor.throwsSpec:{x|<x>}; separator=", "> {
+public <if(isPredefinedRewriteRule.(ruleName) && filterMode && buildAST)> override<endif> final <returnType(ruleDescriptor)> <ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) {
 	<if(trace)>traceIn("<ruleName>", <ruleDescriptor.index>);<endif>
 	<ruleScopeSetUp()>
 	<ruleDeclarations()>
@@ -440,7 +414,7 @@ retval.start = input.LT(1);
 }>
 <endif>
 <if(memoize)>
-int <ruleDescriptor.name>_StartIndex = input.index();
+Integer <ruleDescriptor.name>_StartIndex = input.index();
 <endif>
 >>
 
@@ -513,7 +487,7 @@ if ( state.backtracking>0 ) { memoize(input, <ruleDescriptor.index>, <ruleDescri
  */
 lexerRule(ruleName,nakedBlock,ruleDescriptor,block,memoize) ::= <<
 // $ANTLR start "<ruleName>"
-public final void m<ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) throws RecognitionException {
+public void m<ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) {
 	<if(trace)>traceIn("<ruleName>", <ruleDescriptor.index>);<endif>
 	<ruleScopeSetUp()>
 	<ruleDeclarations()>
@@ -524,8 +498,8 @@ public final void m<ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) 
 		<ruleDescriptor.actions.init>
 		<block>
 <else>
-		int _type = <ruleName>;
-		int _channel = DEFAULT_TOKEN_CHANNEL;
+		Integer _type = <ruleName>;
+		Integer _channel = DEFAULT_TOKEN_CHANNEL;
 		<ruleMemoization(name=ruleName)>
 		<lexerRuleLabelDefs()>
 		<ruleDescriptor.actions.init>
@@ -550,8 +524,7 @@ public final void m<ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) 
  *  that chooses between lexer rules.
  */
 tokensRule(ruleName,nakedBlock,args,block,ruleDescriptor) ::= <<
-@Override
-public void mTokens() throws RecognitionException {
+public override void mTokens() {
 	<block>
 }
 >>
@@ -561,7 +534,7 @@ public void mTokens() throws RecognitionException {
 /** A (...) subrule with multiple alternatives */
 block(alts,decls,decision,enclosingBlockLevel,blockLevel,decisionNumber,maxK,maxAlt,description) ::= <<
 // <fileName>:<description>
-int alt<decisionNumber>=<maxAlt>;
+Integer alt<decisionNumber>=<maxAlt>;
 <decls>
 <@predecision()>
 <decision>
