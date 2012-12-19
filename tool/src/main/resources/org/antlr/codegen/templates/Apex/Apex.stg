@@ -540,7 +540,7 @@ Integer alt<decisionNumber>=<maxAlt>;
 <decision>
 <@postdecision()>
 <@prebranch()>
-<alts:{a | <ifCase(decisionNumber,i,a)>} separator=" else ">
+<alts:{a | <ifCase(decisionNumber,i,a)>}; separator=" else ">
 <@postbranch()>
 >>
 
@@ -959,7 +959,7 @@ dfaAcceptState(alt) ::= "alt<decisionNumber>=<alt>;"
  *  enter to the target state.  To handle gated productions, we may
  *  have to evaluate some predicates for this edge.
  */
-dfaEdge(labelExpr, targetState, predicates) ::= <<
+dfaEdge(labelExpr, targetState, predicates, decisionVar) ::= <<
 if ( (<labelExpr>) <if(predicates)>&& (<predicates>)<endif>) {
 	<targetState>
 }
@@ -971,9 +971,9 @@ if ( (<labelExpr>) <if(predicates)>&& (<predicates>)<endif>) {
  *  decides if this is possible: CodeGenerator.canGenerateSwitch().
  */
 dfaStateSwitch(k,edges,eotPredictsAlt,description,stateNumber,semPredState) ::= <<
-switch ( input.LA(<k>) ) {
-<edges; separator="\n">
-default:
+Integer iLA<k> = input.LA(<k>);
+<edges; separator=" else ">
+else {
 <if(eotPredictsAlt)>
 	alt<decisionNumber>=<eotPredictsAlt>;
 <else>
@@ -987,28 +987,25 @@ throw nvae;})>
 >>
 
 dfaOptionalBlockStateSwitch(k,edges,eotPredictsAlt,description,stateNumber,semPredState) ::= <<
-switch ( input.LA(<k>) ) {
-	<edges; separator="\n">
-}
+Integer iLA<k> = input.LA(<k>);
+<edges; separator=" else ">
 >>
 
 dfaLoopbackStateSwitch(k, edges,eotPredictsAlt,description,stateNumber,semPredState) ::= <<
-switch ( input.LA(<k>) ) {
-<edges; separator="\n">
+Integer iLA<k> = input.LA(<k>);
+<edges; separator=" else ">
 <if(eotPredictsAlt)>
-default:
+else {
 	alt<decisionNumber>=<eotPredictsAlt>;
-	break;
-<endif>
 }
+<endif>
 >>
 
-dfaEdgeSwitch(labels, targetState) ::= <<
-<labels:{it |case <it>:}; separator="\n">
-	{
+dfaEdgeSwitch(labels, targetState, decisionVar) ::= <<
+if( <labels:{it | <decisionVar> == <it> }; separator="||\n\t\t"> )
+{
 	<targetState>
-	}
-	break;
+}
 >>
 
 // C y c l i c  D F A

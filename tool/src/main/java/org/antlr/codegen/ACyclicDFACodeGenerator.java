@@ -148,6 +148,7 @@ public class ACyclicDFACodeGenerator {
 												   (DFAState)edge.target,
 												   k+1);
 			edgeST.add("targetState", targetST);
+			edgeST.add("decisionVar", "iLA" + k);
 			dfaST.add("edges", edgeST);
 			/*
 			System.out.println("back to DFA "+
