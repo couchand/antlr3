@@ -2,12 +2,12 @@ grammar Expr;
 options { language = Apex; }
 
 @header {
-import java.util.HashMap;
+//import java.util.HashMap;
 }
 
 @members {
 /** Map variable name to Integer object holding value */
-HashMap memory = new HashMap();
+Map<String,Integer> memory = new Map<String,Integer>();
 }
 
 prog:   stat+ ;
