@@ -191,8 +191,8 @@ public class Grammar {
 	 *  lexer rules from combined grammars.
 	 */
 	public CommonTokenStream tokenBuffer;
-	public static final String IGNORE_STRING_IN_GRAMMAR_FILE_NAME = "__";
-	public static final String AUTO_GENERATED_TOKEN_NAME_PREFIX = "T__";
+	public static final String IGNORE_STRING_IN_GRAMMAR_FILE_NAME = "_gen_";
+	public static final String AUTO_GENERATED_TOKEN_NAME_PREFIX = "T_";
 
 	public static class Decision {
 		public Grammar grammar;
