@@ -229,7 +229,7 @@ enterAlt(n) ::= "dbg.enterAlt(<n>);<\n>"
 
 @closureBlock.postdecision() ::= "<exitDecision()>"
 
-@altSwitchCase.prealt() ::= "<enterAlt(altNum)>" // altNum is arg of altSwitchCase
+@ifCase.prealt() ::= "<enterAlt(altNum)>" // altNum is arg of ifCase
 
 @element.prematch() ::=
 	"dbg.location(<e.line>,<e.pos>);" // e is arg of element

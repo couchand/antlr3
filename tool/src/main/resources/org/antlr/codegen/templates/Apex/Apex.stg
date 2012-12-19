@@ -540,9 +540,7 @@ Integer alt<decisionNumber>=<maxAlt>;
 <decision>
 <@postdecision()>
 <@prebranch()>
-switch (alt<decisionNumber>) {
-	<alts:{a | <altSwitchCase(i,a)>}>
-}
+<alts:{a | <ifCase(decisionNumber,i,a)>} separator=" else ">
 <@postbranch()>
 >>
 
@@ -635,12 +633,6 @@ optionalBlockSingleAlt ::= block
  *  number.  A DFA predicts the alternative and then a simple switch
  *  does the jump to the code that actually matches that alternative.
  */
-altSwitchCase(altNum,alt) ::= <<
-case <altNum> :
-	<@prealt()>
-	<alt>
-	break;<\n>
->>
 
 ifCase(decisionNum,altNum,alt) ::= <<
 if( alt<decisionNum> == altNum ) {
