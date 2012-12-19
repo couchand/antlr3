@@ -1079,7 +1079,7 @@ protected class DFA<dfa.decisionNumber> extends DFA {
 	<@errorMethod()>
 <if(dfa.specialStateSTs)>
 	@Override
-	public Integer specialStateTransition(int s, IntStream rawInput) throws NoViableAltException {
+	public Integer specialStateTransition(Integer s, IntStream rawInput) throws NoViableAltException {
 		<if(LEXER)>
 		IntStream input = rawInput;
 		<endif>
