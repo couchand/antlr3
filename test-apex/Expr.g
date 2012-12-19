@@ -35,7 +35,7 @@ atom returns [int value]
         {
         Integer v = (Integer)memory.get($ID.text);
         if ( v!=null ) $value = v.intValue();
-        else System.err.println("undefined variable "+$ID.text);
+        else System.debug('undefined variable '+$ID.text);
         }
     |   '(' expr ')' {$value = $expr.value;}
     ;
