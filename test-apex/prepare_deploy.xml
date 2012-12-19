@@ -15,4 +15,7 @@
     <basename property="class_name" file="${class_file}"/>
     <copy file="lib/template.cls-meta.xml" toFile="deploy/src/classes/${class_name}-meta.xml"/>
   </target>
+  <target name="clean">
+    <delete dir="deploy"/>
+  </target>
 </project>
