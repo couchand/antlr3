@@ -31,9 +31,9 @@
 
 @outputFile.imports() ::= <<
 <@super.imports()>
-import org.antlr.stringtemplate.*;
-import org.antlr.stringtemplate.language.*;
-import java.util.HashMap;
+//import org.antlr.stringtemplate.*;
+//import org.antlr.stringtemplate.language.*;
+//import java.util.HashMap;
 >>
 
 /** Add this to each rule's return value struct */
@@ -57,10 +57,11 @@ public String toString() { return st==null?null:st.toString(); }
 	/** allows convenient multi-value initialization:
 	 *  "new STAttrMap().put(...).put(...)"
 	 */
-	@SuppressWarnings("serial")
-	public static class STAttrMap extends HashMap\<String, Object> {
+	//@SuppressWarnings("serial")
+	public static class STAttrMap {
+		Map<String, Object> mAttr = new Map<String, Object>();
 		public STAttrMap put(String attrName, Object value) {
-			super.put(attrName, value);
+			mAttr.put(attrName, value);
 			return this;
 		}
 	}
@@ -124,22 +125,22 @@ null;
  *  template.
  */
 rewriteExternalTemplate(name,args) ::= <%
-templateLib.getInstanceOf("<name>"<if(args)>,
-  new STAttrMap()<args:{a | .put("<a.name>", <a.value>)}>
+templateLib.getInstanceOf('<name>'<if(args)>,
+  new STAttrMap()<args:{a | .put('<a.name>', <a.value>)}>
   <endif>)
 %>
 
 /** expr is a string expression that says what template to load */
 rewriteIndirectTemplate(expr,args) ::= <%
 templateLib.getInstanceOf(<expr><if(args)>,
-  new STAttrMap()<args:{a | .put("<a.name>", <a.value>)}>
+  new STAttrMap()<args:{a | .put('<a.name>', <a.value>)}>
   <endif>)
 %>
 
 /** Invoke an inline template with a set of attribute name/value pairs */
 rewriteInlineTemplate(args, template) ::= <%
-new StringTemplate(templateLib, "<template>"<if(args)>,
-  new STAttrMap()<args:{a | .put("<a.name>", <a.value>)}>
+new StringTemplate(templateLib, '<template>'<if(args)>,
+  new STAttrMap()<args:{a | .put('<a.name>', <a.value>)}>
   <endif>)
 %>
 
@@ -150,7 +151,7 @@ rewriteAction(action) ::= <<
 
 /** An action has %st.attrName=expr; or %{st}.attrName=expr; */
 actionSetAttribute(st,attrName,expr) ::= <<
-(<st>).setAttribute("<attrName>",<expr>);
+(<st>).setAttribute('<attrName>',<expr>);
 >>
 
 /** Translate %{stringExpr} */

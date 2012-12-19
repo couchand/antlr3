@@ -29,7 +29,7 @@
 @outputFile.imports() ::= <<
 <@super.imports()>
 <if(!TREE_PARSER)><! tree parser would already have imported !>
-import org.antlr.runtime.tree.*;<\n>
+//import org.antlr.runtime.tree.*;<\n>
 <endif>
 >>
 
@@ -53,8 +53,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 @returnScope.ruleReturnMembers() ::= <<
 <ASTLabelType> tree;
-@Override
-public <ASTLabelType> getTree() { return tree; }
+public override <ASTLabelType> getTree() { return tree; }
 >>
 
 /** Add a variable to track rule's return AST */

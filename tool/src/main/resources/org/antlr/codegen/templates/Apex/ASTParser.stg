@@ -40,7 +40,7 @@
 
 @rule.setErrorReturnValue() ::= <<
 retval.tree = (<ASTLabelType>)adaptor.errorNode(input, retval.start, input.LT(-1), re);<!
- System.out.println("<ruleName> returns "+((CommonTree)retval.tree).toStringTree()); !>
+ System.debug('<ruleName> returns '+((CommonTree)retval.tree).toStringTree()); !>
 >>
 
 // TOKEN AST STUFF
