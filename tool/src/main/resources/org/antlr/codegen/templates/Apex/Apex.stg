@@ -302,7 +302,7 @@ public void <ruleName>_fragment(<ruleDescriptor.parameterScope:parameterScope()>
 >>
 
 synpred(name) ::= <<
-public final boolean <name>() {
+public boolean <name>() {
 	state.backtracking++;
 	<@start()>
 	Integer start = input.mark();
