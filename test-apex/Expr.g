@@ -1,4 +1,5 @@
 grammar Expr;
+options { language = Apex; }
 
 @header {
 import java.util.HashMap;
