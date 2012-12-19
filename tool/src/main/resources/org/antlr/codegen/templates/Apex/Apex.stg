@@ -498,15 +498,15 @@ public void m<ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) {
 		<ruleDescriptor.actions.init>
 		<block>
 <else>
-		Integer _type = <ruleName>;
-		Integer _channel = DEFAULT_TOKEN_CHANNEL;
+		Integer type = <ruleName>;
+		Integer channel = DEFAULT_TOKEN_CHANNEL;
 		<ruleMemoization(name=ruleName)>
 		<lexerRuleLabelDefs()>
 		<ruleDescriptor.actions.init>
 		<block>
 		<ruleCleanUp()>
-		state.type = _type;
-		state.channel = _channel;
+		state.type = type;
+		state.channel = channel;
 		<(ruleDescriptor.actions.after):execAction()>
 <endif>
 	}
@@ -1094,17 +1094,17 @@ protected class DFA<dfa.decisionNumber> extends DFA {
 	<@errorMethod()>
 <if(dfa.specialStateSTs)>
 	@Override
-	public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
+	public int specialStateTransition(int s, IntStream rawInput) throws NoViableAltException {
 		<if(LEXER)>
-		IntStream input = _input;
+		IntStream input = rawInput;
 		<endif>
 		<if(PARSER)>
-		TokenStream input = (TokenStream)_input;
+		TokenStream input = (TokenStream)rawInput;
 		<endif>
 		<if(TREE_PARSER)>
-		TreeNodeStream input = (TreeNodeStream)_input;
+		TreeNodeStream input = (TreeNodeStream)rawInput;
 		<endif>
-		int _s = s;
+/*		int _s = s;
 		switch ( s ) {
 		<dfa.specialStateSTs:{state |
 		case <i0> : <! compressed special state numbers 0..n-1 !>
@@ -1117,6 +1117,7 @@ protected class DFA<dfa.decisionNumber> extends DFA {
 			new NoViableAltException(getDescription(), <dfa.decisionNumber>, _s, input);
 		error(nvae);
 		throw nvae;
+*/
 	}
 <endif>
 }
