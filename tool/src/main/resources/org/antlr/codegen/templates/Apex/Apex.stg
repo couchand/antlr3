@@ -652,12 +652,10 @@ if( alt<decisionNum> == altNum ) {
 /** An alternative is just a list of elements; at outermost level */
 alt(elements,altNum,description,autoAST,outerAlt,treeLevel,rew) ::= <<
 // <fileName>:<description>
-//{
 <@declarations()>
 <elements:element()>
 <rew>
 <@cleanup()>
-//}
 >>
 
 /** What to emit when there is no rewrite.  For auto build
