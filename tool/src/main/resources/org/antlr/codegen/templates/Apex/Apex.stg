@@ -582,16 +582,15 @@ positiveClosureBlock(alts,decls,decision,enclosingBlockLevel,blockLevel,decision
 int cnt<decisionNumber>=0;
 <decls>
 <@preloop()>
-loop<decisionNumber>:
+//loop<decisionNumber>:
 while (true) {
 	int alt<decisionNumber>=<maxAlt>;
 	<@predecision()>
 	<decision>
 	<@postdecision()>
-	switch (alt<decisionNumber>) {
-	<alts:{a | <altSwitchCase(i,a)>}>
-	default :
-		if ( cnt<decisionNumber> >= 1 ) break loop<decisionNumber>;
+	<alts:{a | <ifCase(decisionNumber,i,a)>}; separator=" else ">
+	else {
+		if ( cnt<decisionNumber> >= 1 ) break; //loop<decisionNumber>;
 		<ruleBacktrackFailure()>
 		EarlyExitException eee = new EarlyExitException(<decisionNumber>, input);
 		<@earlyExitException()>
@@ -609,16 +608,15 @@ closureBlock(alts,decls,decision,enclosingBlockLevel,blockLevel,decisionNumber,m
 // <fileName>:<description>
 <decls>
 <@preloop()>
-loop<decisionNumber>:
+//loop<decisionNumber>:
 while (true) {
 	int alt<decisionNumber>=<maxAlt>;
 	<@predecision()>
 	<decision>
 	<@postdecision()>
-	switch (alt<decisionNumber>) {
-	<alts:{a | <altSwitchCase(i,a)>}>
-	default :
-		break loop<decisionNumber>;
+	<alts:{a | <ifCase(decisionNumber,i,a)>}; separator=" else ">
+	else {
+		break; //loop<decisionNumber>;
 	}
 }
 <@postloop()>
