@@ -136,7 +136,7 @@ public override Token nextToken() {
 		state.tokenStartLine = input.getLine();
 	state.text = null;
 		try {
-			int m = input.mark();
+			Integer m = input.mark();
 			state.backtracking=1; <! means we won't throw slow exception !>
 			state.failed=false;
 			mTokens();
@@ -161,13 +161,13 @@ public override Token nextToken() {
 }
 
 public override void memoize(IntStream input,
-		int ruleIndex,
-		int ruleStartIndex)
+		Integer ruleIndex,
+		Integer ruleStartIndex)
 {
 if ( state.backtracking>1 ) super.memoize(input, ruleIndex, ruleStartIndex);
 }
 
-public override boolean alreadyParsedRule(IntStream input, int ruleIndex) {
+public override boolean alreadyParsedRule(IntStream input, Integer ruleIndex) {
 if ( state.backtracking>1 ) return super.alreadyParsedRule(input, ruleIndex);
 return false;
 }
@@ -447,7 +447,7 @@ lexerRuleLabelDefs() ::= <<
   ruleDescriptor.ruleLabels]
 	:{it |<labelType> <it.label.text>=null;}; separator="\n"
 >
-<ruleDescriptor.charLabels:{it |int <it.label.text>;}; separator="\n">
+<ruleDescriptor.charLabels:{it |Integer <it.label.text>;}; separator="\n">
 <[ruleDescriptor.tokenListLabels,
   ruleDescriptor.ruleListLabels]
 	:{it |List\<Object> list_<it.label.text>=null;}; separator="\n"
@@ -577,12 +577,12 @@ blockSingleAlt(alts,decls,decision,enclosingBlockLevel,blockLevel,decisionNumber
 /** A (..)+ block with 1 or more alternatives */
 positiveClosureBlock(alts,decls,decision,enclosingBlockLevel,blockLevel,decisionNumber,maxK,maxAlt,description) ::= <<
 // <fileName>:<description>
-int cnt<decisionNumber>=0;
+Integer cnt<decisionNumber>=0;
 <decls>
 <@preloop()>
 //loop<decisionNumber>:
 while (true) {
-	int alt<decisionNumber>=<maxAlt>;
+	Integer alt<decisionNumber>=<maxAlt>;
 	<@predecision()>
 	<decision>
 	<@postdecision()>
@@ -608,7 +608,7 @@ closureBlock(alts,decls,decision,enclosingBlockLevel,blockLevel,decisionNumber,m
 <@preloop()>
 //loop<decisionNumber>:
 while (true) {
-	int alt<decisionNumber>=<maxAlt>;
+	Integer alt<decisionNumber>=<maxAlt>;
 	<@predecision()>
 	<decision>
 	<@postdecision()>
@@ -738,10 +738,10 @@ matchSetAndListLabel(s,label,elementIndex,postmatchCode) ::= <<
 /** Match a string literal */
 lexerStringRef(string,label,elementIndex="0") ::= <<
 <if(label)>
-int <label>Start = getCharIndex();
+Integer <label>Start = getCharIndex();
 match(<string>); <checkRuleBacktrackFailure()>
-int <label>StartLine<elementIndex> = getLine();
-int <label>StartCharPos<elementIndex> = getCharPositionInLine();
+Integer <label>StartLine<elementIndex> = getLine();
+Integer <label>StartCharPos<elementIndex> = getCharPositionInLine();
 <label> = new <labelType>(input, Token.INVALID_TOKEN_TYPE, Token.DEFAULT_CHANNEL, <label>Start, getCharIndex()-1);
 <label>.setLine(<label>StartLine<elementIndex>);
 <label>.setCharPositionInLine(<label>StartCharPos<elementIndex>);
@@ -802,9 +802,9 @@ ruleRefAndListLabel(rule,label,elementIndex,args,scope) ::= <<
  */
 lexerRuleRef(rule,label,args,elementIndex,scope) ::= <<
 <if(label)>
-int <label>Start<elementIndex> = getCharIndex();
-int <label>StartLine<elementIndex> = getLine();
-int <label>StartCharPos<elementIndex> = getCharPositionInLine();
+Integer <label>Start<elementIndex> = getCharIndex();
+Integer <label>StartLine<elementIndex> = getLine();
+Integer <label>StartCharPos<elementIndex> = getCharPositionInLine();
 <if(scope)><scope:delegateName()>.<endif>m<rule.name>(<args; separator=", ">); <checkRuleBacktrackFailure()>
 <label> = new <labelType>(input, Token.INVALID_TOKEN_TYPE, Token.DEFAULT_CHANNEL, <label>Start<elementIndex>, getCharIndex()-1);
 <label>.setLine(<label>StartLine<elementIndex>);
@@ -823,9 +823,9 @@ lexerRuleRefAndListLabel(rule,label,args,elementIndex,scope) ::= <<
 /** EOF in the lexer */
 lexerMatchEOF(label,elementIndex) ::= <<
 <if(label)>
-int <label>Start<elementIndex> = getCharIndex();
-int <label>StartLine<elementIndex> = getLine();
-int <label>StartCharPos<elementIndex> = getCharPositionInLine();
+Integer <label>Start<elementIndex> = getCharIndex();
+Integer <label>StartLine<elementIndex> = getLine();
+Integer <label>StartCharPos<elementIndex> = getCharPositionInLine();
 match(EOF); <checkRuleBacktrackFailure()>
 <labelType> <label> = new <labelType>(input, EOF, Token.DEFAULT_CHANNEL, <label>Start<elementIndex>, getCharIndex()-1);
 <label>.setLine(<label>StartLine<elementIndex>);
@@ -873,7 +873,7 @@ if ( !(<evalPredicate(pred,description)>) ) {
 // F i x e d  D F A  (if-then-else)
 
 dfaState(k,edges,eotPredictsAlt,description,stateNumber,semPredState) ::= <<
-int LA<decisionNumber>_<stateNumber> = input.LA(<k>);
+Integer LA<decisionNumber>_<stateNumber> = input.LA(<k>);
 <edges; separator="\nelse ">
 <if((!isTrue.(last(edges).labelExpr)) && (!last(edges).predicates))>
 else {
@@ -901,7 +901,7 @@ wrapNvaExceptionForK1(exceptionCode) ::= <<
 >>
 
 wrapNvaExceptionForK2(exceptionCode) ::= <<
-int nvaeMark = input.mark();
+Integer nvaeMark = input.mark();
 try {
 	input.consume();
 	<exceptionCode>
@@ -911,9 +911,9 @@ try {
 >>
 
 wrapNvaExceptionForKN(exceptionCode) ::= <<
-int nvaeMark = input.mark();
+Integer nvaeMark = input.mark();
 try {
-	for (int nvaeConsume = 0; nvaeConsume \< <k> - 1; nvaeConsume++) {
+	for (Integer nvaeConsume = 0; nvaeConsume \< <k> - 1; nvaeConsume++) {
 		input.consume();
 	}
 	<exceptionCode>
@@ -928,7 +928,7 @@ try {
  *  expect "if ( LA(1)==X ) match(X);" and that's it.
  */
 dfaOptionalBlockState(k,edges,eotPredictsAlt,description,stateNumber,semPredState) ::= <<
-int LA<decisionNumber>_<stateNumber> = input.LA(<k>);
+Integer LA<decisionNumber>_<stateNumber> = input.LA(<k>);
 <edges; separator="\nelse ">
 >>
 
@@ -939,7 +939,7 @@ int LA<decisionNumber>_<stateNumber> = input.LA(<k>);
  *  anything other than 'a' predicts exiting.
  */
 dfaLoopbackState(k,edges,eotPredictsAlt,description,stateNumber,semPredState) ::= <<
-int LA<decisionNumber>_<stateNumber> = input.LA(<k>);
+Integer LA<decisionNumber>_<stateNumber> = input.LA(<k>);
 <edges; separator="\nelse ">
 <if(eotPredictsAlt)>
 <if(!edges)>
@@ -1052,9 +1052,9 @@ static final short[] DFA<dfa.decisionNumber>_special = DFA.unpackEncodedString(D
 static final short[][] DFA<dfa.decisionNumber>_transition;
 
 static {
-	int numStates = DFA<dfa.decisionNumber>_transitionS.length;
+	Integer numStates = DFA<dfa.decisionNumber>_transitionS.length;
 	DFA<dfa.decisionNumber>_transition = new short[numStates][];
-	for (int i=0; i\<numStates; i++) {
+	for (Integer i=0; i\<numStates; i++) {
 		DFA<dfa.decisionNumber>_transition[i] = DFA.unpackEncodedString(DFA<dfa.decisionNumber>_transitionS[i]);
 	}
 }
@@ -1079,7 +1079,7 @@ protected class DFA<dfa.decisionNumber> extends DFA {
 	<@errorMethod()>
 <if(dfa.specialStateSTs)>
 	@Override
-	public int specialStateTransition(int s, IntStream rawInput) throws NoViableAltException {
+	public Integer specialStateTransition(int s, IntStream rawInput) throws NoViableAltException {
 		<if(LEXER)>
 		IntStream input = rawInput;
 		<endif>
@@ -1089,7 +1089,7 @@ protected class DFA<dfa.decisionNumber> extends DFA {
 		<if(TREE_PARSER)>
 		TreeNodeStream input = (TreeNodeStream)rawInput;
 		<endif>
-/*		int _s = s;
+/*		Integer _s = s;
 		switch ( s ) {
 		<dfa.specialStateSTs:{state |
 		case <i0> : <! compressed special state numbers 0..n-1 !>
@@ -1112,9 +1112,9 @@ protected class DFA<dfa.decisionNumber> extends DFA {
  *  state.
  */
 cyclicDFAState(decisionNumber,stateNumber,edges,needErrorClause,semPredState) ::= <<
-int LA<decisionNumber>_<stateNumber> = input.LA(1);
+Integer LA<decisionNumber>_<stateNumber> = input.LA(1);
 <if(semPredState)> <! get next lookahead symbol to test edges, then rewind !>
-int index<decisionNumber>_<stateNumber> = input.index();
+Integer index<decisionNumber>_<stateNumber> = input.index();
 input.rewind();
 <endif>
 s = -1;
