@@ -35,10 +35,10 @@ import org.stringtemplate.v4.ST;
 import java.util.Set;
 
 public class ApexTarget extends Target {
-	public static char QUOTE_MARK = ''';
+	public static char QUOTE_MARK = '\'';
 
 	public ApexTarget() {
-		targetCharValueEscape['''] = "\\'";
+		targetCharValueEscape['\''] = "\\'";
 	}
 	/** Convert from an ANTLR string literal found in a grammar file to
 	 *  an equivalent string literal in the target language.  For Java, this
@@ -74,7 +74,7 @@ public class ApexTarget extends Target {
 			switch (is.charAt(i+1)) {
 			    // Pass through any escapes that Apex also needs
 			    //
-			    case    ''':
+			    case    '\'':
 			    case    'n':
 			    case    'r':
 			    case    't':
