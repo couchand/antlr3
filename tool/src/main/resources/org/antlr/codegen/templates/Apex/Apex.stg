@@ -848,8 +848,8 @@ match(EOF); <checkRuleBacktrackFailure()>
 >>
 
 // used for left-recursive rules
-recRuleDefArg()                       ::= "int <recRuleArg()>"
-recRuleArg()                          ::= "_p"
+recRuleDefArg()                       ::= "Integer <recRuleArg()>"
+recRuleArg()                          ::= "p"
 recRuleAltPredicate(ruleName,opPrec)  ::= "<recRuleArg()> \<= <opPrec>"
 recRuleSetResultAction()              ::= "root_0=$<ruleName>_primary.tree;"
 recRuleSetReturnAction(src,name)      ::= "$<name>=$<src>.<name>;"
