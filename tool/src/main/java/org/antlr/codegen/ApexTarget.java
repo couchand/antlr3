@@ -35,6 +35,133 @@ import org.stringtemplate.v4.ST;
 import java.util.Set;
 
 public class ApexTarget extends Target {
+	public static char QUOTE_MARK = ''';
+
+	public ApexTarget() {
+		targetCharValueEscape['''] = "\\'";
+	}
+	/** Convert from an ANTLR string literal found in a grammar file to
+	 *  an equivalent string literal in the target language.  For Java, this
+	 *  is the translation 'a\n"' -> "a\n\"".  Expect single quotes
+	 *  around the incoming literal.  Just flip the quotes and replace
+	 *  double quotes with \"
+	 *
+	 *  Note that we have decided to allow poeple to use '\"' without
+	 *  penalty, so we must build the target string in a loop as Utils.replae
+	 *  cannot handle both \" and " without a lot of messing around.
+	 *
+	 */
+        @Override
+	public String getTargetStringLiteralFromANTLRStringLiteral(
+		CodeGenerator generator,
+		String literal)
+	{
+		StringBuilder sb = new StringBuilder();
+		StringBuilder is = new StringBuilder(literal);
+
+		// Opening quote
+		//
+		sb.append(QUOTE_MARK);
+
+		for (int i = 1; i < is.length() -1; i++) {
+		    if  (is.charAt(i) == '\\') {
+			// Anything escaped is what it is! We assume that
+			// people know how to escape characters correctly. However
+			// we catch anything that does not need an escape in Java (which
+			// is what the default implementation is dealing with and remove
+			// the escape. The C target does this for instance.
+			//
+			switch (is.charAt(i+1)) {
+			    // Pass through any escapes that Apex also needs
+			    //
+			    case    ''':
+			    case    'n':
+			    case    'r':
+			    case    't':
+			    case    'b':
+			    case    'f':
+			    case    '\\':
+			    case    'u':    // Assume unnnn
+				sb.append('\\');    // Pass the escape through
+				break;
+			    default:
+				// Remove the escape by virtue of not adding it here
+				// Thus \' becomes ' and so on
+				//
+				break;
+			}
+
+			// Go past the \ character
+			//
+			i++;
+		    } else {
+			// Chracters that don't need \ in ANTLR 'strings' but do in Java
+			//
+			if (is.charAt(i) == QUOTE_MARK) {
+			    // We need to escape " in Java
+			    //
+			    sb.append('\\');
+			}
+		    }
+		    // Add in the next character, which may have been escaped
+		    //
+		    sb.append(is.charAt(i));
+		}
+
+		// Append closing " and return
+		//
+		sb.append(QUOTE_MARK);
+
+		return sb.toString();
+	}
+
+	/** Given a random string of Java unicode chars, return a new string with
+	 *  optionally appropriate quote characters for target language and possibly
+	 *  with some escaped characters.  For example, if the incoming string has
+	 *  actual newline characters, the output of this method would convert them
+	 *  to the two char sequence \n for Java, C, C++, ...  The new string has
+	 *  double-quotes around it as well.  Example String in memory:
+	 *
+	 *     a"[newlinechar]b'c[carriagereturnchar]d[tab]e\f
+	 *
+	 *  would be converted to the valid Java s:
+	 *
+	 *     "a\"\nb'c\rd\te\\f"
+	 *
+	 *  or
+	 *
+	 *     a\"\nb'c\rd\te\\f
+	 *
+	 *  depending on the quoted arg.
+	 */
+	@Override
+	public String getTargetStringLiteralFromString(String s, boolean quoted) {
+		if ( s==null ) {
+			return null;
+		}
+
+		StringBuilder buf = new StringBuilder();
+		if ( quoted ) {
+			buf.append(QUOTE_MARK);
+		}
+		for (int i=0; i<s.length(); i++) {
+			int c = s.charAt(i);
+			if ( c!='\"' && // don't escape double quotes in strings for Apex
+				 c<targetCharValueEscape.length &&
+				 targetCharValueEscape[c]!=null )
+			{
+				buf.append(targetCharValueEscape[c]);
+			}
+			else {
+				buf.append((char)c);
+			}
+		}
+		if ( quoted ) {
+			buf.append(QUOTE_MARK);
+		}
+		return buf.toString();
+	}
+
     @Override
     public boolean useBaseTemplatesForSynPredFragments() {
         return false;
