@@ -349,7 +349,7 @@ rule(ruleName,ruleDescriptor,block,emptyRule,description,exceptions,finally,memo
 
 // $ANTLR start "<ruleName>"
 // <fileName>:<description>
-public <if(isPredefinedRewriteRule.(ruleName) && filterMode && buildAST)> override<endif> final <returnType(ruleDescriptor)> <ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) {
+public <if(isPredefinedRewriteRule.(ruleName) && filterMode && buildAST)> override<endif> <returnType(ruleDescriptor)> <ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) {
 	<if(trace)>traceIn('<ruleName>', <ruleDescriptor.index>);<endif>
 	<ruleScopeSetUp()>
 	<ruleDeclarations()>
