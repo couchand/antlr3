@@ -1,0 +1,18 @@
+<project name="Prepare deployment to SFDC" default="prepare_deploy" basedir="." xmlns:sf="antlib:com.salesforce">
+  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+  <target name="prepare_deploy">
+    <mkdir dir="deploy/src/classes"/>
+    <copy file="lib/build.xml" toDir="deploy/"/>
+    <copy file="lib/package.xml" toDir="deploy/src/"/>
+    <foreach target="prepare_class" param="class_file">
+      <path>
+        <fileset dir="." includes="*.cls"/>
+      </path>
+    </foreach>
+  </target>
+  <target name="prepare_class">
+    <copy file="${class_file}" toDir="deploy/src/classes"/>
+    <basename property="class_name" file="${class_file}"/>
+    <copy file="lib/template.cls-meta.xml" toFile="deploy/src/classes/${class_name}-meta.xml"/>
+  </target>
+</project>
