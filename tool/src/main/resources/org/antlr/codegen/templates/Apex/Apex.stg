@@ -97,7 +97,7 @@ public class <grammar.recognizerName> extends <@superClassName><superClass><@end
 			{g|this.<g:delegateName()> = <g:delegateName()>;}; separator="\n">
 		<last(grammar.delegators):{g|gParent = <g:delegateName()>;}>
 	}
-	public override String getGrammarFileName() { return "<fileName>"; }
+	public override String getGrammarFileName() { return '<fileName>'; }
 
 <if(filterMode)>
 	<filteringNextToken()>
@@ -185,7 +185,7 @@ genericParser(grammar, name, scopes, tokens, tokenNames, rules, numRules,
 public class <grammar.recognizerName> extends <@superClassName><superClass><@end> {
 <if(grammar.grammarIsRoot)>
 	public static final String[] tokenNames = new String[] {
-		"\<invalid>", "\<EOR>", "\<DOWN>", "\<UP>", <tokenNames; separator=", ", wrap="\n\t\t">
+		'\<invalid>', '\<EOR>', '\<DOWN>', '\<UP>', <tokenNames; separator=", ", wrap="\n\t\t">
 	};
 <endif>
 	<tokens:{it |public static final Integer <it.name>=<it.type>;}; separator="\n">
@@ -219,7 +219,7 @@ public class <grammar.recognizerName> extends <@superClassName><superClass><@end
 <@end>
 
 	public override String[] getTokenNames() { return <grammar.composite.rootGrammar.recognizerName>.tokenNames; }
-	public override String getGrammarFileName() { return "<fileName>"; }
+	public override String getGrammarFileName() { return '<fileName>'; }
 
 	<members>
 
@@ -287,12 +287,12 @@ synpredRule(ruleName, ruleDescriptor, block, description, nakedBlock) ::=
 public void <ruleName>_fragment(<ruleDescriptor.parameterScope:parameterScope()>) {
 	<ruleLabelDefs()>
 <if(trace)>
-	traceIn("<ruleName>_fragment", <ruleDescriptor.index>);
+	traceIn('<ruleName>_fragment', <ruleDescriptor.index>);
 	try {
 		<block>
 	}
 	finally {
-		traceOut("<ruleName>_fragment", <ruleDescriptor.index>);
+		traceOut('<ruleName>_fragment', <ruleDescriptor.index>);
 	}
 <else>
 	<block>
@@ -309,7 +309,7 @@ public final boolean <name>() {
 	try {
 		<name>_fragment(); // can never throw exception
 	} catch (RecognitionException re) {
-		System.debug("impossible: "+re);
+		System.debug('impossible: '+re);
 	}
 	Boolean success = !state.failed;
 	input.rewind(start);
@@ -350,7 +350,7 @@ rule(ruleName,ruleDescriptor,block,emptyRule,description,exceptions,finally,memo
 // $ANTLR start "<ruleName>"
 // <fileName>:<description>
 public <if(isPredefinedRewriteRule.(ruleName) && filterMode && buildAST)> override<endif> final <returnType(ruleDescriptor)> <ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) {
-	<if(trace)>traceIn("<ruleName>", <ruleDescriptor.index>);<endif>
+	<if(trace)>traceIn('<ruleName>', <ruleDescriptor.index>);<endif>
 	<ruleScopeSetUp()>
 	<ruleDeclarations()>
 	<ruleLabelDefs()>
@@ -379,7 +379,7 @@ public <if(isPredefinedRewriteRule.(ruleName) && filterMode && buildAST)> overri
 <endif>
 	finally {
 		// do for sure before leaving
-		<if(trace)>traceOut("<ruleName>", <ruleDescriptor.index>);<endif>
+		<if(trace)>traceOut('<ruleName>', <ruleDescriptor.index>);<endif>
 		<memoize()>
 		<ruleScopeCleanUp()>
 		<finally>
@@ -488,7 +488,7 @@ if ( state.backtracking>0 ) { memoize(input, <ruleDescriptor.index>, <ruleDescri
 lexerRule(ruleName,nakedBlock,ruleDescriptor,block,memoize) ::= <<
 // $ANTLR start "<ruleName>"
 public void m<ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) {
-	<if(trace)>traceIn("<ruleName>", <ruleDescriptor.index>);<endif>
+	<if(trace)>traceIn('<ruleName>', <ruleDescriptor.index>);<endif>
 	<ruleScopeSetUp()>
 	<ruleDeclarations()>
 	try {
@@ -512,7 +512,7 @@ public void m<ruleName>(<ruleDescriptor.parameterScope:parameterScope()>) {
 	}
 	finally {
 		// do for sure before leaving
-		<if(trace)>traceOut("<ruleName>", <ruleDescriptor.index>);<endif>
+		<if(trace)>traceOut('<ruleName>', <ruleDescriptor.index>);<endif>
 		<ruleScopeCleanUp()>
 		<memoize()>
 	}
@@ -878,7 +878,7 @@ match(input, Token.UP, null); <checkRuleBacktrackFailure()>
 validateSemanticPredicate(pred,description) ::= <<
 if ( !(<evalPredicate(pred,description)>) ) {
 	<ruleBacktrackFailure()>
-	throw new FailedPredicateException(input, "<ruleName>", "<description>");
+	throw new FailedPredicateException(input, '<ruleName>', '<description>');
 }
 >>
 
@@ -894,7 +894,7 @@ else {
 <else>
 	<ruleBacktrackFailure()>
 	<(nvaExceptionWrapperMap.(k))({NoViableAltException nvae =
-	new NoViableAltException("<description>", <decisionNumber>, <stateNumber>, input);
+	new NoViableAltException('<description>', <decisionNumber>, <stateNumber>, input);
 <@noViableAltException()>
 throw nvae;})>
 <endif>
@@ -991,7 +991,7 @@ default:
 <else>
 	<ruleBacktrackFailure()>
 	<(nvaExceptionWrapperMap.(k))({NoViableAltException nvae =
-	new NoViableAltException("<description>", <decisionNumber>, <stateNumber>, input);
+	new NoViableAltException('<description>', <decisionNumber>, <stateNumber>, input);
 <@noViableAltException()>
 throw nvae;})>
 <endif>
@@ -1043,19 +1043,19 @@ alt<decisionNumber> = dfa<decisionNumber>.predict(input);
  */
 cyclicDFA(dfa) ::= <<
 static final String DFA<dfa.decisionNumber>_eotS =
-	"<dfa.javaCompressedEOT; wrap="\"+\n\t\"">";
+	'<dfa.javaCompressedEOT; wrap="'+\n\t'">';
 static final String DFA<dfa.decisionNumber>_eofS =
-	"<dfa.javaCompressedEOF; wrap="\"+\n\t\"">";
+	'<dfa.javaCompressedEOF; wrap="'+\n\t'">';
 static final String DFA<dfa.decisionNumber>_minS =
-	"<dfa.javaCompressedMin; wrap="\"+\n\t\"">";
+	'<dfa.javaCompressedMin; wrap="'+\n\t'">';
 static final String DFA<dfa.decisionNumber>_maxS =
-	"<dfa.javaCompressedMax; wrap="\"+\n\t\"">";
+	'<dfa.javaCompressedMax; wrap="'+\n\t'">';
 static final String DFA<dfa.decisionNumber>_acceptS =
-	"<dfa.javaCompressedAccept; wrap="\"+\n\t\"">";
+	'<dfa.javaCompressedAccept; wrap="'+\n\t'">';
 static final String DFA<dfa.decisionNumber>_specialS =
-	"<dfa.javaCompressedSpecial; wrap="\"+\n\t\"">}>";
+	'<dfa.javaCompressedSpecial; wrap="'+\n\t'">}>';
 static final String[] DFA<dfa.decisionNumber>_transitionS = {
-		<dfa.javaCompressedTransition:{s|"<s; wrap="\"+\n\"">"}; separator=",\n">
+		<dfa.javaCompressedTransition:{s|"<s; wrap="'+\n'">"}; separator=",\n">
 };
 
 static final short[] DFA<dfa.decisionNumber>_eot = DFA.unpackEncodedString(DFA<dfa.decisionNumber>_eotS);
