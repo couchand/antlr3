@@ -1,0 +1,126 @@
+<project name="Sample usage of Salesforce Ant tasks" default="help" basedir="." xmlns:sf="antlib:com.salesforce">
+
+    <property environment="env"/>
+
+    <target name="svn_ant_check">
+      <path id="svnant.classpath">
+        <fileset dir="${svn.svnantdir}">
+          <include name= "*.jar" />
+        </fileset>
+      </path>
+      <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
+    </target>
+
+    <target name="prop_file_check">
+      <fail message="You must define the environment with -Denv=environment_name." unless="env"/>
+    </target>
+
+    <target name="src_dir_check">
+      <available property="src_dir_exists" file="src" type="dir"/>
+      <fail message="You must provide a source directory at src/" unless="src_dir_exists"/>
+      <available property="package_file_exists" file="src/package.xml"/>
+      <fail message="You must provide a package file at src/package.xml" unless="package_file_exists"/>
+    </target>
+
+    <target name="undeploy_dir_check">
+      <available property="undeploy_dir_exists" file="undeploy" type="dir"/>
+      <fail message="You must provide an undeploy directory at undeploy/" unless="undeploy_dir_exists"/>
+      <available property="undeploy_package_file_exists" file="undeploy/package.xml"/>
+      <fail message="You must provide a package file at undeploy/package.xml" unless="undeploy_package_file_exists"/>
+      <available property="destructive_changes_file_exists" file="undeploy/destructiveChanges.xml"/>
+      <fail message="You must provide a destructive changes file at undeploy/destructiveChanges.xml" unless="destructive_changes_file_exists"/>
+    </target>
+
+    <target name="help" description="Display detailed usage information.">
+      <echo level="info">Prerequisites:
+	- build.properties.&lt;environment_name&gt;	A property file for each environment specifying Salesforce credentials
+	- src/					The source directory to push and pull from
+	- src/package.xml			The package file detailing the metadata files to push and pull
+Usage:
+	ant target_name -Denv=&lt;environment_name&gt;
+
+List targets with:
+	ant -p
+
+</echo>
+      <exec executable="ant">
+        <arg value="-p" />
+      </exec>
+    </target>
+
+    <target name="pull" description="Pull metadata from the specified Salesforce environment." depends="prop_file_check, src_dir_check">
+      <echo level="info">Pulling package metadata for ${env}...</echo>
+      <sf:retrieve username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" retrieveTarget="src" unpackaged="src/package.xml"/>
+    </target>
+
+    <target name="push" description="Push metadata to the specified Salesforce environment." depends="prop_file_check, src_dir_check">
+      <echo level="info">Pushing package metadata for ${env}...</echo>
+      <sf:deploy username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" deployRoot="src"/>
+    </target>
+
+    <target name="pushZip" depends="prop_file_check, src_dir_check">
+      <echo level="info">Zipping package...</echo>
+      <zip destfile="deploy.zip" basedir="src" />
+      <echo level="info">Pushing archive file for ${env}...</echo>
+      <sf:deploy username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" zipFile="deploy.zip" pollWaitMillis="1000"/>
+      <delete file="deploy.zip" />
+    </target>
+
+    <target name="deploy" description="Deploy metadata to the specified Salesforce environment and run tests." depends="prop_file_check, src_dir_check">
+      <fail message="You must first specify the tests to run for this project."/>
+      <echo level="info">Deploying and running tests for ${env}...</echo>
+      <sf:deploy username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" deployRoot="src">
+        <runTest>NameAllProjectTestsHere</runTest>
+        <runTest>TestImportantController</runTest>
+      </sf:deploy>
+    </target>
+
+    <target name="undeploy" description="Delete all files listed in undeploy/destructiveChanges.xml on the specified Salesforce environnment." depends="prop_file_check, undeploy_dir_check">
+      <echo level="info">Deleting files...</echo>
+      <sf:deploy username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" deployRoot="undeploy"/>
+    </target>
+
+    <target name="verify" description="Verify a deployment against the specified Salesforce environment." depends="prop_file_check, src_dir_check">
+      <echo level="info">Verifying deployment for ${env}...</echo>
+      <sf:deploy username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" deployRoot="src" checkOnly="true" pollWaitMillis="60000" maxPoll="30"/>
+    </target>
+
+    <target name="diff" description="Diff your local source files against the specified Salesforce environment" depends="prop_file_check, src_dir_check">
+      <echo level="info">Diffing metadata against ${env}...</echo>
+      <mkdir dir="${env}"/>
+      <copy file="src/package.xml" todir="${env}"/>
+      <sf:retrieve username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" retrieveTarget="${env}" unpackaged="${env}/package.xml"/>
+      <exec executable="diff">
+        <arg value="-r"/>
+        <arg value="${env}"/>
+        <arg value="src"/>
+      </exec>
+    </target>
+
+    <target name="autocommit" description="Commit an entire repository to version control." depends="svn_ant_check, prop_file_check">
+      <echo level="info">Checking out the current state of the repository</echo>
+      <svnSetting id="svn.settings" username="${svn.username}" password="${svn.password}"/>
+      <svn refId="svn.settings">
+        <checkout url="https://bluewolf.svn.cvsdude.com/bluewolf/clients/${svn.repository}" destPath="${env}" />
+      </svn>
+      <echo level="info">Copying complete package file</echo>
+      <copy file="package.xml" todir="${env}/src"/>
+      <echo level="info">Retrieving current state of Salesforce</echo>
+      <sf:retrieve username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" retrieveTarget="${env}/src" unpackaged="${env}/src/package.xml"/>
+      <echo level="info">Committing back to the repository</echo>
+      <svn refId="svn.settings">
+        <commit dir="${env}" message="autocommit of ${sf.username} by BuildTool on behalf of ${svn.username}"/>
+      </svn>
+    </target>
+
+    <target name="listMetadata" description="List metadata files of a particular type (e.g., -Dtype=ApexClass) for the specified Salesforce environment.">
+      <fail message="You must define the metadata type with -Dtype=metadata_type.  View options with describeMetadata." unless="type"/>
+      <echo level="info">Listing ${type} metadata for ${env}...</echo>
+      <sf:listMetadata username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" metadataType="${type}"/>
+    </target>
+
+    <target name="describeMetadata" description="Describe all metadata types valid for the specified Salesforce environment.">
+      <echo level="info">Listing all types of metadata for ${env}...</echo>
+      <sf:describeMetadata username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}"/>
+    </target>
+</project>
