@@ -30,7 +30,7 @@ multExpr returns [int value]
     ; 
 
 atom returns [int value]
-    :   INT {$value = Integer.parseInt($INT.text);}
+    :   UINT {$value = Integer.parseInt($UINT.text);}
     |   ID
         {
         Integer v = (Integer)memory.get($ID.text);
@@ -41,6 +41,6 @@ atom returns [int value]
     ;
 
 ID  :   ('a'..'z'|'A'..'Z')+ ;
-INT :   '0'..'9'+ ;
+UINT :  '0'..'9'+ ;
 NEWLINE:'\r'? '\n' ;
 WS  :   (' '|'\t')+ {skip();} ;
