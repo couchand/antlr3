@@ -1,3 +1,3 @@
-global class RecognitionException extends Exception
+global class NoViableAltException extends Exception
 {
 }
