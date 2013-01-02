@@ -189,4 +189,9 @@ public class ApexTarget extends Target {
 			}
 		}
 	}
+
+	@Override
+	public String getTarget64BitStringFromValue(long word) {
+		return super.getTarget64BitStringFromValue(word).substring(2);
+	}
 }
