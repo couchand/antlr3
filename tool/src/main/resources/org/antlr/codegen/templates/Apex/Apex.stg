@@ -635,7 +635,7 @@ optionalBlockSingleAlt ::= block
  */
 
 ifCase(decisionNum,altNum,alt) ::= <<
-if( alt<decisionNum> == altNum ) {
+if( alt<decisionNum> == <altNum> ) {
 	<@prealt()>
 	<alt>
 }
